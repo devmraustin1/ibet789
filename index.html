@@ -1,1 +1,1333 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>MMBET789 - Football Betting Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent; }
+        :root {
+            --primary: #0c2461; --secondary: #1e3799; --accent: #f1c40f; --danger: #e74c3c; --success: #2ecc71; --text:#ffffff; --text-light:#95a5a6; --card-bg: rgba(255,255,255,0.07);
+            --admin-sidebar: #051226; --admin-bg: #f4f7fb; --admin-text: #0f1724;
+        }
+        body { background: linear-gradient(135deg,var(--primary),var(--secondary)); color:var(--text); min-height:100vh; overflow-x:hidden; touch-action: pan-y; }
+        
+        /* Platform Switcher */
+        .platform-switcher { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; gap: 10px; }
+        .platform-btn { background: var(--accent); color: #2c3e50; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        
+        /* Hidden sections */
+        .hidden { display: none !important; }
+        
+        /* === USER INTERFACE STYLES === */
+        .container{ max-width:1100px; margin:0 auto; padding:15px; padding-bottom:80px; }
+        header{ display:flex; justify-content:space-between; align-items:center; padding:15px 0; margin-bottom:20px; }
+        .logo{ font-size:20px; font-weight:bold; color:var(--accent); display:flex; align-items:center; }
+        .logo i{ margin-right:10px; }
+        .language-switcher{ background: rgba(255,255,255,0.05); border:none; color:var(--text); padding:8px 12px; border-radius:5px; cursor:pointer; font-size:14px; display:flex; align-items:center; gap:5px; }
+        .balance-card{ background:var(--card-bg); border-radius:10px; padding:15px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
+        .balance-info h3{ font-size:14px; color:var(--text-light); margin-bottom:5px; }
+        .balance-amount{ font-size:24px; font-weight:bold; color:var(--accent); }
+        .deposit-btn{ background:var(--success); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; }
+        .match-section{ background:var(--card-bg); border-radius:10px; padding:20px; margin-bottom:20px; box-shadow:0 5px 15px rgba(0,0,0,0.2); position:relative; }
+        .match-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.08); }
+        .match-title{ font-size:18px; font-weight:bold; color:var(--accent); }
+        .match-date{ color:var(--text-light); font-size:12px; }
+        .teams{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .team{ display:flex; flex-direction:column; align-items:center; width:30%; }
+        .team-logo{ width:60px; height:60px; background:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:10px; font-size:24px; color:#333; font-weight:bold; }
+        .team-name{ font-weight:bold; text-align:center; font-size:14px; }
+        .vs{ font-size:18px; font-weight:bold; color:var(--danger); }
+        .betting-options{ display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-bottom:20px; }
+        .bet-option{ background: rgba(52,152,219,0.12); border-radius:5px; padding:12px; text-align:center; cursor:pointer; transition:all .3s; }
+        .bet-option:hover, .bet-option.active{ background: rgba(52,152,219,0.22); transform: translateY(-3px); }
+        .bet-type{ font-size:12px; color:var(--text-light); margin-bottom:5px; }
+        .bet-odds{ font-size:16px; font-weight:bold; color:var(--accent); }
+        .section-title{ font-size:18px; font-weight:bold; margin:25px 0 15px; color:var(--accent); display:flex; align-items:center; gap:10px; }
+        .bet-categories{ display:grid; grid-template-columns: repeat(2,1fr); gap:15px; margin-bottom:30px; }
+        .category-card{ background:var(--card-bg); border-radius:10px; padding:20px; text-align:center; cursor:pointer; transition:all .3s; }
+        .category-card:hover{ background: rgba(255,255,255,0.08); transform:translateY(-5px); }
+        .category-icon{ font-size:30px; margin-bottom:15px; color:#3498db; }
+        .category-name{ font-size:16px; font-weight:bold; margin-bottom:5px; }
+        .category-desc{ font-size:12px; color:var(--text-light); }
+        .promo-banner{ background: linear-gradient(135deg,var(--danger),#c0392b); border-radius:10px; padding:20px; text-align:center; margin-bottom:20px; }
+        .promo-title{ font-size:18px; font-weight:bold; margin-bottom:10px; }
+        .promo-text{ font-size:14px; margin-bottom:15px; }
+        .promo-btn{ background:var(--accent); color:#2c3e50; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight:bold; }
+        .bottom-nav{ position:fixed; bottom:0; left:0; right:0; background:var(--primary); display:flex; justify-content:space-around; padding:10px 0; box-shadow:0 -2px 10px rgba(0,0,0,0.2); z-index:100; }
+        .nav-item{ display:flex; flex-direction:column; align-items:center; color:var(--text-light); font-size:12px; cursor:pointer; transition:all .3s; padding:5px; flex:1; text-align:center; }
+        .nav-item.active{ color:var(--accent); }
+        .nav-icon{ font-size:20px; margin-bottom:5px; }
+        .modal{ display:none; position:fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center; padding:20px; }
+        .modal-content{ background:var(--secondary); border-radius:10px; width:100%; max-width:420px; padding:25px; box-shadow:0 5px 25px rgba(0,0,0,0.5); max-height:90vh; overflow-y:auto; }
+        .modal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .modal-title{ font-size:20px; font-weight:bold; color:var(--accent); }
+        .close-modal{ background:none; border:none; color:var(--text); font-size:24px; cursor:pointer; }
+        .form-group{ margin-bottom:15px; }
+        .form-label{ display:block; margin-bottom:5px; font-size:14px; }
+        .form-input{ width:100%; padding:12px; border-radius:5px; border:1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.12); color:var(--text); font-size:16px; }
+        .form-input:focus{ outline:none; border-color:var(--accent); }
+        .submit-btn{ width:100%; background:var(--accent); color:#2c3e50; border:none; padding:12px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:16px; margin-top:10px; }
+        .auth-switch{ text-align:center; margin-top:15px; font-size:14px; }
+        .auth-link{ color:var(--accent); cursor:pointer; text-decoration:underline; }
+        .bet-slip{ background:var(--card-bg); border-radius:10px; padding:20px; margin-bottom:20px; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
+        .slip-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+        .slip-title{ font-size:18px; font-weight:bold; }
+        .slip-clear{ color:var(--danger); cursor:pointer; font-size:14px; }
+        .slip-content{ min-height:100px; background: rgba(0,0,0,0.12); border-radius:5px; padding:15px; margin-bottom:15px; }
+        .empty-slip{ text-align:center; color:var(--text-light); padding:20px 0; }
+        .slip-footer{ display:flex; flex-direction:column; gap:10px; }
+        .stake-input{ background: rgba(0,0,0,0.12); border:1px solid rgba(255,255,255,0.12); border-radius:5px; padding:12px; color:white; width:100%; font-size:16px; }
+        .potential-win{ display:flex; justify-content:space-between; margin:10px 0; font-weight:bold; }
+        .quick-bets{ display:grid; grid-template-columns: repeat(3,1fr); gap:5px; margin-bottom:15px; }
+        .quick-bet{ background: rgba(52,152,219,0.12); border-radius:3px; padding:8px; text-align:center; cursor:pointer; font-size:14px; }
+        .place-bet{ background:var(--success); color:white; border:none; padding:15px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:16px; transition:all .3s; }
+        .active-bet{ background: rgba(46,204,113,0.2) !important; border:2px solid var(--success) !important; }
+        .page-section{ display:none; }
+        .page-section.active{ display:block; }
+        .login-overlay{ display:none; position:absolute; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.7); border-radius:10px; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:20px; z-index:10; }
+        .login-overlay.active{ display:flex; }
+        .overlay-title{ font-size:20px; margin-bottom:10px; color:var(--accent); }
+        .overlay-text{ margin-bottom:20px; font-size:14px; }
+        .overlay-buttons{ display:flex; gap:10px; }
+        .overlay-btn{ padding:10px 20px; border-radius:5px; border:none; font-weight:bold; cursor:pointer; }
+        .overlay-login{ background:var(--accent); color:#2c3e50; }
+        .overlay-register{ background:var(--success); color:white; }
+        .user-info{ display:none; align-items:center; gap:10px; }
+        .user-avatar{ width:40px; height:40px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; color:#2c3e50; font-weight:bold; }
+        .user-name{ font-weight:bold; }
+        .logout-btn{ background:var(--danger); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:14px; }
+        
+        /* === ADMIN PANEL STYLES === */
+        .admin-app{ display:flex; min-height:100vh; background: var(--admin-bg); color: var(--admin-text); }
+        .admin-sidebar{ width:280px; background:var(--admin-sidebar); color:#dbeefd; padding:18px 14px; flex-shrink:0; overflow:auto }
+        .admin-brand{ font-weight:800; font-size:20px; color:#fff; margin-bottom:6px; }
+        .admin-brand small{ display:block; font-size:12px; color:#cfe8ff; }
+        .admin-menu .section-title{ font-size:12px; color:#9fc3ea; margin:14px 6px; font-weight:600; }
+        .admin-menu a{ display:block; padding:10px 12px; border-radius:6px; margin-bottom:6px; background:transparent; color:#dbeefd; font-size:14px; text-decoration: none; }
+        .admin-menu a:hover{ background:rgba(255,255,255,0.04); cursor:pointer; }
+        .admin-menu a.active{ background:rgba(255,255,255,0.08); color:#fff; font-weight:600; }
+        .admin-main{ flex:1; padding:20px; min-width:0; background: var(--admin-bg); }
+        .admin-topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; gap:12px; }
+        .admin-title { font-size:20px; font-weight:700; }
+        .admin-subtitle{ font-size:13px; color:#64748b; }
+        .admin-controls{ display:flex; gap:10px; align-items:center; }
+        .admin-btn{ padding:8px 12px; border-radius:6px; background:#0b71f5; color:#fff; border:none; cursor:pointer; font-size:13px; }
+        .admin-btn.secondary{ background:#e6eef9; color:#0b2540; }
+        .admin-btn.small{ padding:6px 10px; font-size:12px; }
+        .admin-statgrid{ display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
+        .admin-stat{ background:#fff; padding:12px; border-radius:8px; min-width:160px; box-shadow:0 1px 6px rgba(2,6,23,0.06); }
+        .admin-stat .label{ font-size:12px; color:#64748b; }
+        .admin-stat .val{ font-size:18px; font-weight:700; margin-top:6px; }
+        .admin-panel{ background:#fff; padding:14px; border-radius:8px; box-shadow:0 1px 6px rgba(2,6,23,0.06); margin-bottom:14px; }
+        table{ width:100%; border-collapse:collapse; font-size:13px; }
+        th,td{ padding:8px 10px; border-bottom:1px solid #eef2f7; text-align:left; }
+        th{ background:#fbfdff; color:#374151; font-weight:700; }
+        .search{ padding:8px; border:1px solid #e6eef9; border-radius:6px; font-size:13px; }
+        .tag{ padding:4px 8px; border-radius:999px; background:#eef2ff; color:#034ea2; font-size:12px; }
+        .admin-modal-backdrop{ position:fixed; inset:0; background:rgba(2,6,23,0.45); display:none; align-items:center; justify-content:center; padding:16px; z-index:9999; }
+        .admin-modal{ background:#fff; border-radius:8px; padding:16px; min-width:320px; max-width:920px; box-shadow:0 8px 40px rgba(2,6,23,0.3); }
+        .form-row{ display:flex; gap:10px; margin-bottom:10px; }
+        .form-row input, .form-row select, .form-row textarea{ flex:1; padding:8px; border:1px solid #e6eef9; border-radius:6px; font-size:13px; }
+        #adminLoginModal .admin-modal{ max-width:420px; }
+        .login-title{ font-size:18px; font-weight:700; margin-bottom:6px; }
+        
+        /* Stock Management Specific Styles */
+        .stock-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom:10px; border-bottom:1px solid #eef2f7; }
+        .stock-title{ font-size:18px; font-weight:700; color:#0f1724; }
+        .stock-controls{ display:flex; gap:10px; align-items:center; }
+        .stock-table th{ background:#f8fafc; font-weight:600; color:#475569; font-size:12px; text-transform:uppercase; letter-spacing:0.5px; }
+        .stock-table td{ font-size:13px; vertical-align:middle; }
+        .stock-input{ width:70px; padding:4px 6px; border:1px solid #e2e8f0; border-radius:4px; text-align:center; font-size:12px; }
+        .team-cell{ display:flex; align-items:center; gap:8px; }
+        .team-badge{ width:24px; height:24px; border-radius:50%; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:bold; color:#475569; }
+        .refresh-btn{ background:#10b981; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:4px; }
+        .hdp-cell, .ou-cell{ display:flex; flex-direction:column; gap:4px; }
+        .odds-value{ font-weight:600; color:#0f1724; }
+        .odds-input{ width:60px; padding:3px 5px; border:1px solid #e2e8f0; border-radius:3px; text-align:center; font-size:11px; }
+        .odds-type-select{ padding:4px 6px; border:1px solid #e2e8f0; border-radius:4px; font-size:12px; }
+        
+        /* Agent Management Styles */
+        .agent-code-card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .agent-code-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .agent-code-title { font-weight: 600; color: #0f1724; }
+        .agent-code-value { font-family: monospace; background: #f1f5f9; padding: 5px 10px; border-radius: 4px; }
+        .limit-input-group { display: flex; gap: 10px; margin-bottom: 10px; }
+        .limit-input { flex: 1; padding: 8px; border: 1px solid #e2e8f0; border-radius: 4px; }
+        
+        /* Request Styles */
+        .request-card { background: #fff; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid #f59e0b; }
+        .request-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .request-title { font-weight: 600; color: #0f1724; }
+        .request-meta { font-size: 12px; color: #64748b; }
+        .request-actions { display: flex; gap: 8px; margin-top: 10px; }
+        
+        /* Responsive */
+        @media (max-width:900px){ 
+            .container{ padding:10px; } 
+            .betting-options{ grid-template-columns:repeat(2,1fr); } 
+            .admin-sidebar{ display:none; }
+            .admin-app{ flex-direction:column; }
+            .admin-main{ padding:12px; }
+            .admin-statgrid{ flex-direction:column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Platform Switcher -->
+    <div class="platform-switcher">
+        <button class="platform-btn" id="switchToUser">User Interface</button>
+        <button class="platform-btn" id="switchToAdmin">Admin Panel</button>
+    </div>
 
+    <!-- User Interface -->
+    <div id="user-interface">
+        <div class="container">
+            <header>
+                <div class="logo">
+                    <i class="fas fa-futbol"></i>
+                    <span id="brandTitle">MMBET789</span>
+                </div>
+
+                <div style="display:flex;align-items:center;gap:10px">
+                    <div class="user-info" id="userInfo">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div class="user-name" id="userName"></div>
+                        <button class="logout-btn" id="logoutBtn">Logout</button>
+                    </div>
+
+                    <div style="display:flex;gap:8px" class="user-actions">
+                        <button class="language-switcher" id="languageSwitcher"><i class="fas fa-globe"></i> English</button>
+                        <button class="deposit-btn" id="openLogin">Login / Register</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Balance Card -->
+            <div class="balance-card">
+                <div class="balance-info">
+                    <h3>အကောင့်လက်ကျန်ငွေ</h3>
+                    <div class="balance-amount" id="balanceAmount">€0.00</div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                    <button class="deposit-btn" id="btnDeposit">Deposit</button>
+                    <button class="deposit-btn" id="btnWithdraw" style="background:#ff8a65">Withdraw</button>
+                </div>
+            </div>
+
+            <!-- HOME / USER INTERFACE SECTIONS -->
+            <div id="home-section" class="page-section active">
+                <!-- Match card (example) -->
+                <div class="match-section" id="homeMatches">
+                    <div class="login-overlay" id="betLoginOverlay">
+                        <div class="overlay-title">အကောင့်ဝင်ရန်လိုအပ်သည်</div>
+                        <div class="overlay-text">ကြေးထပ်ရန်အတွက် ကျေးဇူးပြု၍ အကောင့်ဝင်ပါ သို့မဟုတ် အကောင့်အသစ်ဖွင့်ပါ</div>
+                        <div class="overlay-buttons">
+                            <button class="overlay-btn overlay-login" id="overlayLogin">အကောင့်ဝင်မည်</button>
+                            <button class="overlay-btn overlay-register" id="overlayRegister">အကောင့်အသစ်ဖွင့်မည်</button>
+                        </div>
+                    </div>
+
+                    <div class="match-header">
+                        <div class="match-title">Premier League — Live Matches</div>
+                        <div class="match-date" id="homeDate">ယနေ့</div>
+                    </div>
+
+                    <!-- dynamic matches will be rendered here -->
+                    <div id="matchesContainer"></div>
+                </div>
+
+                <div class="section-title">
+                    <i class="fas fa-futbol"></i> Bet Categories
+                </div>
+
+                <div class="bet-categories" id="betCategories">
+                    <div class="category-card"><div class="category-icon"><i class="fas fa-list"></i></div><div class="category-name">Single</div><div class="category-desc">Single bet</div></div>
+                    <div class="category-card"><div class="category-icon"><i class="fas fa-globe-europe"></i></div><div class="category-name">Mix Bet</div><div class="category-desc">Parlay / Mix</div></div>
+                    <div class="category-card"><div class="category-icon"><i class="fas fa-history"></i></div><div class="category-name">Betted Matches</div><div class="category-desc">Your recent bets</div></div>
+                    <div class="category-card"><div class="category-icon"><i class="fas fa-money-bill-wave"></i></div><div class="category-name">Results</div><div class="category-desc">View results</div></div>
+                </div>
+
+                <div class="promo-banner">
+                    <div class="promo-title">Special Offer!</div>
+                    <div class="promo-text">Get 100% bonus on your first deposit up to 500€</div>
+                    <button class="promo-btn">Claim Now</button>
+                </div>
+            </div>
+
+            <!-- Bet Slip -->
+            <div id="slip-section" class="page-section">
+                <div class="bet-slip">
+                    <div class="slip-header">
+                        <div class="slip-title">Bet Slip</div>
+                        <div class="slip-clear" id="clearSlip">Clear All</div>
+                    </div>
+
+                    <div class="slip-content" id="slipContent">
+                        <div class="empty-slip"><i class="fas fa-ticket-alt" style="font-size:40px;margin-bottom:15px;"></i><div>No bets added to slip</div></div>
+                    </div>
+
+                    <div class="slip-footer">
+                        <input type="number" class="stake-input" id="stakeInput" placeholder="Enter Stake" min="1" />
+                        <div class="quick-bets">
+                            <div class="quick-bet">5€</div>
+                            <div class="quick-bet">10€</div>
+                            <div class="quick-bet">20€</div>
+                        </div>
+
+                        <div class="potential-win">Potential Win: <span id="potentialWin">0.00€</span></div>
+
+                        <button class="place-bet" id="placeBetBtn">Place Bet</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live section -->
+            <div id="live-section" class="page-section">
+                <div class="section-title"><i class="fas fa-broadcast-tower"></i> Live Matches</div>
+                <div id="liveMatchesContainer"></div>
+            </div>
+
+            <!-- History section -->
+            <div id="history-section" class="page-section">
+                <div class="section-title"><i class="fas fa-history"></i> Bet History</div>
+                <div id="historyContainer"></div>
+            </div>
+
+            <!-- Account section -->
+            <div id="account-section" class="page-section">
+                <div class="section-title"><i class="fas fa-user-circle"></i> My Account</div>
+
+                <div class="balance-card">
+                    <div class="balance-info">
+                        <h3>Account Balance</h3>
+                        <div class="balance-amount" id="accountBalance">€0.00</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                        <button class="deposit-btn" id="depositBtn">Deposit</button>
+                        <button class="deposit-btn" style="background:#ff8a65" id="withdrawBtn">Withdraw</button>
+                    </div>
+                </div>
+
+                <div id="accountActions" style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+                    <div class="category-card"><div class="category-icon"><i class="fas fa-wallet"></i></div><div class="category-name">Deposit Funds</div><div class="category-desc">Add money to your account</div></div>
+                    <div class="category-card"><div class="category-icon"><i class="fas fa-money-bill-wave"></i></div><div class="category-name">Withdraw Funds</div><div class="category-desc">Request a withdrawal</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" data-target="home-section"><i class="fas fa-home nav-icon"></i><span>Home</span></div>
+            <div class="nav-item" data-target="slip-section"><i class="fas fa-ticket-alt nav-icon"></i><span>Bet Slip</span></div>
+            <div class="nav-item" data-target="live-section"><i class="fas fa-broadcast-tower nav-icon"></i><span>Live</span></div>
+            <div class="nav-item" data-target="history-section"><i class="fas fa-history nav-icon"></i><span>History</span></div>
+            <div class="nav-item" data-target="account-section"><i class="fas fa-user nav-icon"></i><span>Account</span></div>
+        </div>
+
+        <!-- Login Modal -->
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <div class="modal-header"><div class="modal-title">Login</div><button class="close-modal" id="closeLogin">&times;</button></div>
+                <form id="loginForm">
+                    <div class="form-group"><label class="form-label">Username</label><input type="text" id="loginUsername" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Password</label><input type="password" id="loginPassword" class="form-input" required></div>
+                    <button type="submit" class="submit-btn">Login</button>
+                </form>
+                <div style="margin-top:12px; font-size:13px; color:var(--text-light)">Demo creds: user/user123 | agent/agent123</div>
+            </div>
+        </div>
+
+        <!-- Register Modal -->
+        <div class="modal" id="registerModal">
+            <div class="modal-content">
+                <div class="modal-header"><div class="modal-title">Register</div><button class="close-modal" id="closeRegister">&times;</button></div>
+                <form id="registerForm">
+                    <div class="form-group"><label class="form-label">Username</label><input type="text" id="regUsername" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Email</label><input type="email" id="regEmail" class="form-input" required></div>
+                    <div class="form-group"><label class="form-label">Password</label><input type="password" id="regPassword" class="form-input" required></div>
+                    <button type="submit" class="submit-btn">Register</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="hidden">
+        <div class="admin-app" id="adminAppRoot">
+            <aside class="admin-sidebar" role="navigation" aria-label="Sidebar">
+                <div class="admin-brand">MMBET789 <small>Admin Panel</small></div>
+                <div class="small" style="color:#cfe8ff;margin-bottom:10px">Account: <strong id="adminName">--</strong></div>
+
+                <div class="admin-menu">
+                    <div class="section-title">DASHBOARD</div>
+                    <a data-nav="admin-dashboard" class="active">Dashboard</a>
+
+                    <div class="section-title">AGENT MANAGEMENT</div>
+                    <a data-nav="agent-codes">Agent Codes</a>
+                    <a data-nav="agent-list">Agent List</a>
+                    <a data-nav="deposit-withdrawal-limits">Deposit & Withdrawal Limits</a>
+                    <a data-nav="betting-odds">Betting Odds Management</a>
+                    <a data-nav="max-bet-amount">Max Bet Amount</a>
+
+                    <div class="section-title">USER MANAGEMENT</div>
+                    <a data-nav="user-list">User List</a>
+                    <a data-nav="user-block-requests">User Block Requests</a>
+
+                    <div class="section-title">FINANCIAL MANAGEMENT</div>
+                    <a data-nav="payment-logs">Payment Logs</a>
+                    <a data-nav="deposit-requests">Deposit Requests</a>
+                    <a data-nav="withdraw-requests">Withdraw Requests</a>
+                    <a data-nav="financial-reports">Financial Reports</a>
+
+                    <div class="section-title">STOCK MANAGEMENT</div>
+                    <a data-nav="stock-hdp">HDP &amp; OU</a>
+                    <a data-nav="stock-hdp-fh">HDP &amp; OU (1st Half)</a>
+                    <a data-nav="stock-oe-1x2">OE &amp; 1X2</a>
+                    <a data-nav="stock-totalgoal">Total Goal</a>
+                    <a data-nav="stock-correctscore">Correct Score</a>
+                    <a data-nav="stock-parlay">Parlay</a>
+                    <a data-nav="stock-mixparlay">Mix Parlay</a>
+                    <a data-nav="stock-myanmar-parlay">Myanmar Parlay</a>
+                    <a data-nav="stock-hf-ft">Half Time / Full Time</a>
+                    <a data-nav="stock-first-last">First Goal / Last Goal</a>
+                    <a data-nav="stock-doublechance">Double Chance</a>
+                    <a data-nav="stock-1d">1D</a>
+                    <a data-nav="stock-2d">2D</a>
+                    <a data-nav="stock-allbets">All Bets</a>
+                    <a data-nav="stock-member-outstanding">Member Outstanding</a>
+
+                    <div class="section-title">MEMBER MANAGEMENT</div>
+                    <a data-nav="member">Member</a>
+                    <a data-nav="subuser">Sub User</a>
+
+                    <div class="section-title">REPORT</div>
+                    <a data-nav="rep-winlose-details">Win Lose (Details)</a>
+                    <a data-nav="rep-winlose-account">Win Lose (Account)</a>
+                    <a data-nav="rep-winlose-casino">Win Lose (Casino)</a>
+                    <a data-nav="rep-winlose-match">Win Lose (Match)</a>
+                    <a data-nav="rep-winlose-bettype">Win Lose (Bet Type)</a>
+                    <a data-nav="rep-statement">Statement</a>
+                    <a data-nav="rep-member-statement">Member Statement</a>
+                    <a data-nav="rep-member-list">Member List</a>
+                    <a data-nav="rep-logged-in">Logged In Members</a>
+                    <a data-nav="rep-results">Results</a>
+                    <a data-nav="rep-results-entered">Results Entered</a>
+                    <a data-nav="rep-cancelled">Cancelled Bets List</a>
+                    <a data-nav="rep-exchange-rate">Exchange Rate</a>
+                    <a data-nav="rep-payment-history">Payment &amp; Transfer History</a>
+                    <a data-nav="rep-log-accounts">Log Accounts</a>
+                    <a data-nav="rep-log-web-login">Log Web Login</a>
+                    <a data-nav="rep-non-active-member">Non - Active Member</a>
+                    <a data-nav="rep-auto-transfer">Auto-Transfer In-Out</a>
+
+                    <div class="section-title">OLD REPORT</div>
+                    <a data-nav="old-2025-09">Sep 2025</a>
+                    <a data-nav="old-2025-08">Aug 2025</a>
+                    <a data-nav="old-2025-07">Jul 2025</a>
+                    <a data-nav="old-2025-06">Jun 2025</a>
+                    <a data-nav="old-2025-05">May 2025</a>
+                    <a data-nav="old-2025-04">Apr 2025</a>
+
+                    <div class="section-title">PAYMENT</div>
+                    <a data-nav="quickpay">Quick Pay</a>
+                    <a data-nav="payment-detail">Payment Detail / Transfer</a>
+
+                    <div style="height:30px"></div>
+                    <div style="font-size:12px;color:#9fc3ea">Version: 2.0 • Real-time Odds</div>
+                </div>
+            </aside>
+
+            <main class="admin-main">
+                <div class="admin-topbar">
+                    <div>
+                        <div class="admin-title">MMBET789 — Admin Dashboard</div>
+                        <div class="admin-subtitle">Manage agents, odds, payments and reports</div>
+                    </div>
+                    <div class="admin-controls">
+                        <div style="text-align:right">
+                            <div style="font-size:12px;color:#64748b">System Balance</div>
+                            <div id="adminBalance" style="font-weight:700;font-size:16px">$ 245,680.50</div>
+                        </div>
+                        <button class="admin-btn" id="adminQuickPay">Quick Pay</button>
+                        <button class="admin-btn secondary" id="adminLogout" style="display:none">Logout</button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Panel -->
+                <div class="admin-panel" id="panel-admin-dashboard">
+                    <div class="stock-header">
+                        <div class="stock-title">DASHBOARD OVERVIEW</div>
+                        <div class="stock-controls">
+                            <span style="font-size:13px;color:#64748b">Today: <span id="currentDate">2025-10-10</span></span>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-statgrid">
+                        <div class="admin-stat"><div class="label">Total Users</div><div class="val" id="statTotalUsers">1,542</div></div>
+                        <div class="admin-stat"><div class="label">Active Agents</div><div class="val" id="statAgents">42</div></div>
+                        <div class="admin-stat"><div class="label">Today Turnover</div><div class="val" id="statTurnover">$ 15,320</div></div>
+                        <div class="admin-stat"><div class="label">Today Bets</div><div class="val" id="statTodayBets">284</div></div>
+                        <div class="admin-stat"><div class="label">Today Wins</div><div class="val" id="statTodayWins">$ 8,450</div></div>
+                        <div class="admin-stat"><div class="label">Today Losses</div><div class="val" id="statTodayLosses">$ 6,870</div></div>
+                        <div class="admin-stat"><div class="label">Pending Deposits</div><div class="val" id="statPendingDeposits">8</div></div>
+                        <div class="admin-stat"><div class="label">Pending Withdrawals</div><div class="val" id="statPendingWithdrawals">5</div></div>
+                    </div>
+                    
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:20px">
+                        <div class="admin-panel">
+                            <div class="stock-header">
+                                <div class="stock-title">RECENT DEPOSIT REQUESTS</div>
+                            </div>
+                            <div id="recentDeposits">
+                                <div class="request-card">
+                                    <div class="request-header">
+                                        <div class="request-title">User: john_doe</div>
+                                        <div class="request-meta">10 min ago</div>
+                                    </div>
+                                    <div>Amount: $500 | Method: Bank Transfer</div>
+                                    <div class="request-actions">
+                                        <button class="admin-btn small">Approve</button>
+                                        <button class="admin-btn secondary small">Reject</button>
+                                    </div>
+                                </div>
+                                <div class="request-card">
+                                    <div class="request-header">
+                                        <div class="request-title">User: mary_smith</div>
+                                        <div class="request-meta">25 min ago</div>
+                                    </div>
+                                    <div>Amount: $200 | Method: E-Wallet</div>
+                                    <div class="request-actions">
+                                        <button class="admin-btn small">Approve</button>
+                                        <button class="admin-btn secondary small">Reject</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="admin-panel">
+                            <div class="stock-header">
+                                <div class="stock-title">RECENT WITHDRAWAL REQUESTS</div>
+                            </div>
+                            <div id="recentWithdrawals">
+                                <div class="request-card">
+                                    <div class="request-header">
+                                        <div class="request-title">User: david_wilson</div>
+                                        <div class="request-meta">15 min ago</div>
+                                    </div>
+                                    <div>Amount: $300 | Method: Bank Transfer</div>
+                                    <div class="request-actions">
+                                        <button class="admin-btn small">Approve</button>
+                                        <button class="admin-btn secondary small">Reject</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Management Panel -->
+                <div class="admin-panel hidden" id="panel-agent-codes">
+                    <div class="stock-header">
+                        <div class="stock-title">AGENT MANAGEMENT - AGENT CODES</div>
+                    </div>
+                    
+                    <div class="agent-code-card">
+                        <div class="agent-code-header">
+                            <div class="agent-code-title">Senior Agent Code</div>
+                            <button class="admin-btn small">Generate New</button>
+                        </div>
+                        <div class="agent-code-value">M789-001</div>
+                        <div style="font-size:12px;color:#64748b;margin-top:5px">Assigned to: John Smith (Senior Agent)</div>
+                    </div>
+                    
+                    <div class="agent-code-card">
+                        <div class="agent-code-header">
+                            <div class="agent-code-title">Standard Agent Codes</div>
+                            <button class="admin-btn small">Generate New</button>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:10px;margin-top:10px">
+                            <div class="agent-code-value">M789-002</div>
+                            <div class="agent-code-value">M789-003</div>
+                            <div class="agent-code-value">M789-004</div>
+                            <div class="agent-code-value">M789-005</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User List Panel -->
+                <div class="admin-panel hidden" id="panel-user-list">
+                    <div class="stock-header">
+                        <div class="stock-title">USER MANAGEMENT - USER LIST</div>
+                        <div class="stock-controls">
+                            <input class="search" placeholder="Search users..." />
+                        </div>
+                    </div>
+                    
+                    <table class="stock-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Agent</th>
+                                <th>Balance</th>
+                                <th>Status</th>
+                                <th>Last Login</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1001</td>
+                                <td>john_doe</td>
+                                <td>M789-001</td>
+                                <td>$450.50</td>
+                                <td><span style="color:var(--success)">Active</span></td>
+                                <td>2025-10-10 14:30</td>
+                                <td>
+                                    <button class="admin-btn small">View</button>
+                                    <button class="admin-btn secondary small">Block</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1002</td>
+                                <td>mary_smith</td>
+                                <td>M789-002</td>
+                                <td>$320.00</td>
+                                <td><span style="color:var(--success)">Active</span></td>
+                                <td>2025-10-10 12:15</td>
+                                <td>
+                                    <button class="admin-btn small">View</button>
+                                    <button class="admin-btn secondary small">Block</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>1003</td>
+                                <td>david_wilson</td>
+                                <td>M789-001</td>
+                                <td>$150.75</td>
+                                <td><span style="color:var(--danger)">Blocked</span></td>
+                                <td>2025-10-09 18:45</td>
+                                <td>
+                                    <button class="admin-btn small">View</button>
+                                    <button class="admin-btn small" style="background:var(--success)">Unblock</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Stock Management HDP & OU Panel -->
+                <div class="admin-panel hidden" id="panel-stock-hdp">
+                    <div class="stock-header">
+                        <div class="stock-title">STOCK MANAGEMENT - HDP & OU</div>
+                        <div class="stock-controls">
+                            <input class="search" placeholder="Search matches..." />
+                            <button class="refresh-btn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                </svg>
+                                Refresh All
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stock-table-container">
+                        <table class="stock-table">
+                            <thead>
+                                <tr>
+                                    <th>League</th>
+                                    <th>Date</th>
+                                    <th>Match</th>
+                                    <th>Odds Type</th>
+                                    <th>Home</th>
+                                    <th>Stock</th>
+                                    <th>Away</th>
+                                    <th>Over</th>
+                                    <th>Stock</th>
+                                    <th>Under</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stockHdpBody">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Other panels will be shown based on navigation -->
+                <div id="adminPanelsArea" class="hidden">
+                    <!-- Additional panels will be loaded here -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Admin Login Modal -->
+        <div class="admin-modal-backdrop" id="adminLoginModal" style="display:flex">
+            <div class="admin-modal" role="dialog" aria-modal="true">
+                <div class="login-title">MMBET789 Admin Login</div>
+                <div style="font-size:13px;color:#64748b;margin-bottom:12px">Enter admin credentials to access the admin panel.</div>
+                <div class="form-row">
+                    <input id="adminLoginUser" placeholder="Username" />
+                    <input id="adminLoginPass" type="password" placeholder="Password" />
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+                    <div style="font-size:12px;color:#94a3b8">Demo: <strong>admin</strong> / <strong>admin123</strong></div>
+                    <div style="display:flex;gap:8px">
+                        <button class="admin-btn secondary" id="adminLoginClear">Clear</button>
+                        <button class="admin-btn" id="adminLoginBtn">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== PLATFORM SWITCHER ==========
+        document.getElementById('switchToUser').addEventListener('click', function() {
+            document.getElementById('user-interface').classList.remove('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
+        });
+        
+        document.getElementById('switchToAdmin').addEventListener('click', function() {
+            document.getElementById('user-interface').classList.add('hidden');
+            document.getElementById('admin-panel').classList.remove('hidden');
+            // Show admin login if not logged in
+            if (!localStorage.getItem('mmbet_admin')) {
+                showAdminLogin(true);
+            }
+        });
+
+        // ========== USER INTERFACE CODE ==========
+        const API_BASE = 'http://localhost:3000/api';
+        const $ = s => document.querySelector(s);
+        const $$ = s => Array.from(document.querySelectorAll(s));
+        let token = localStorage.getItem('mmbet_token') || null;
+        let currentUser = JSON.parse(localStorage.getItem('mmbet_user') || 'null');
+        let slip = [];
+
+        // Global matches data (shared between admin and user interfaces)
+        let matchesData = [
+            {
+                id: 1,
+                league: 'Premier League',
+                date: '2025-10-10 20:00',
+                match: 'Man Utd vs Chelsea',
+                home: 'Man Utd',
+                away: 'Chelsea',
+                oddsType: 'malaysia', // malaysia, hongkong, europe
+                markets: {
+                    hdp: { home: '-0.95', away: '+0.85', handicap: '0.5' },
+                    ou: { over: '0.90', under: '0.95', line: '2.5' }
+                }
+            },
+            {
+                id: 2,
+                league: 'Premier League',
+                date: '2025-10-10 22:30',
+                match: 'Arsenal vs Liverpool',
+                home: 'Arsenal',
+                away: 'Liverpool',
+                oddsType: 'malaysia',
+                markets: {
+                    hdp: { home: '-0.85', away: '+0.75', handicap: '0.25' },
+                    ou: { over: '0.85', under: '1.00', line: '3.0' }
+                }
+            },
+            {
+                id: 3,
+                league: 'La Liga',
+                date: '2025-10-11 19:00',
+                match: 'Barcelona vs Real Madrid',
+                home: 'Barcelona',
+                away: 'Real Madrid',
+                oddsType: 'malaysia',
+                markets: {
+                    hdp: { home: '-0.75', away: '+0.65', handicap: '0.5' },
+                    ou: { over: '0.95', under: '0.90', line: '2.5' }
+                }
+            },
+            {
+                id: 4,
+                league: 'Serie A',
+                date: '2025-10-11 21:45',
+                match: 'Juventus vs AC Milan',
+                home: 'Juventus',
+                away: 'AC Milan',
+                oddsType: 'malaysia',
+                markets: {
+                    hdp: { home: '-0.90', away: '+0.80', handicap: '0.5' },
+                    ou: { over: '1.05', under: '0.80', line: '2.0' }
+                }
+            },
+            {
+                id: 5,
+                league: 'Ligue 1',
+                date: '2025-10-12 17:30',
+                match: 'PSG vs Lyon',
+                home: 'PSG',
+                away: 'Lyon',
+                oddsType: 'malaysia',
+                markets: {
+                    hdp: { home: '-1.20', away: '+1.10', handicap: '1.5' },
+                    ou: { over: '0.95', under: '0.90', line: '3.5' }
+                }
+            },
+            {
+                id: 6,
+                league: 'Champions League',
+                date: '2025-10-12 20:00',
+                match: 'Bayern vs Real Madrid',
+                home: 'Bayern',
+                away: 'Real Madrid',
+                oddsType: 'malaysia',
+                markets: {
+                    hdp: { home: '-0.80', away: '+0.70', handicap: '0.5' },
+                    ou: { over: '0.95', under: '0.90', line: '2.5' }
+                }
+            }
+        ];
+
+        // Function to update matches data (shared between admin and user)
+        function updateMatchesData(updatedMatches) {
+            matchesData = updatedMatches;
+            // Update user interface if it's visible
+            if (!document.getElementById('user-interface').classList.contains('hidden')) {
+                loadLiveOdds('Premier League', 'matchesContainer');
+            }
+            // Update admin interface if it's visible
+            if (!document.getElementById('admin-panel').classList.contains('hidden')) {
+                renderStockHdpTable();
+            }
+        }
+
+        function apiFetch(path, opts = {}) {
+            const headers = opts.headers || {};
+            headers['Content-Type'] = 'application/json';
+            if (token) headers['Authorization'] = 'Bearer ' + token;
+            return fetch(API_BASE + path, { ...opts, headers }).then(async res => {
+                if (res.status === 401) {
+                    logout();
+                    throw new Error('Unauthorized');
+                }
+                return res.json();
+            });
+        }
+
+        // ---------- NAV ----------
+        $$('.nav-item').forEach(item => item.addEventListener('click', function(){
+            $$('.nav-item').forEach(n=>n.classList.remove('active'));
+            this.classList.add('active');
+            const target = this.dataset.target;
+            $$('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(target).classList.add('active');
+            
+            // Load specific content for sections
+            if (target === 'history-section') {
+                loadBetHistory();
+            }
+        }));
+
+        // ---------- LOGIN / REGISTER ----------
+        $('#openLogin').addEventListener('click', ()=>$('#loginModal').style.display='flex');
+        $('#closeLogin').addEventListener('click', ()=>$('#loginModal').style.display='none');
+        $('#closeRegister').addEventListener('click', ()=>$('#registerModal').style.display='none');
+        $('#overlayLogin').addEventListener('click', ()=>{ $('#betLoginOverlay').classList.remove('active'); $('#loginModal').style.display='flex'; });
+        $('#overlayRegister').addEventListener('click', ()=>{ $('#betLoginOverlay').classList.remove('active'); $('#registerModal').style.display='flex'; });
+
+        $('#loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = $('#loginUsername').value;
+            const password = $('#loginPassword').value;
+            try {
+                // Demo authentication
+                if ((username === 'user' && password === 'user123') || 
+                    (username === 'agent' && password === 'agent123')) {
+                    token = 'demo_token_' + username;
+                    currentUser = { 
+                        username: username, 
+                        role: username === 'agent' ? 'agent' : 'user',
+                        balance: username === 'agent' ? 12540.00 : 450.50
+                    };
+                    localStorage.setItem('mmbet_token', token); 
+                    localStorage.setItem('mmbet_user', JSON.stringify(currentUser));
+                    updateUIAfterLogin(); 
+                    $('#loginModal').style.display='none';
+                    alert('Login successful as ' + username);
+                } else {
+                    alert('Invalid credentials. Try user/user123 or agent/agent123');
+                }
+            } catch (err) { console.error(err); alert('Login error'); }
+        });
+
+        $('#registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = $('#regUsername').value;
+            const password = $('#regPassword').value;
+            try {
+                // Demo registration
+                token = 'demo_token_' + username;
+                currentUser = { username: username, role: 'user', balance: 0 };
+                localStorage.setItem('mmbet_token', token); 
+                localStorage.setItem('mmbet_user', JSON.stringify(currentUser));
+                updateUIAfterLogin(); 
+                $('#registerModal').style.display='none';
+                alert('Registered & logged in as ' + username);
+            } catch (err) { console.error(err); alert('Register error'); }
+        });
+
+        $('#logoutBtn').addEventListener('click', logout);
+
+        function logout() {
+            token = null; currentUser = null;
+            localStorage.removeItem('mmbet_token'); localStorage.removeItem('mmbet_user');
+            $('#userInfo').style.display='none'; document.querySelector('.user-actions').style.display='flex';
+            document.getElementById('balanceAmount').textContent = '€0.00';
+            alert('Logged out');
+        }
+
+        function updateUIAfterLogin() {
+            if (!currentUser) return;
+            $('#userInfo').style.display='flex'; document.querySelector('.user-actions').style.display='none';
+            $('#userName').textContent = currentUser.username; 
+            $('#userAvatar').textContent = currentUser.username.charAt(0).toUpperCase();
+            $('#balanceAmount').textContent = '€' + (currentUser.balance || 0).toFixed(2);
+            $('#accountBalance').textContent = '€' + (currentUser.balance || 0).toFixed(2);
+            $('#betLoginOverlay').classList.remove('active');
+        }
+
+        // ---------- LIVE ODDS & MATCH RENDER ----------
+        async function loadLiveOdds(league='Premier League', containerId='matchesContainer') {
+            try {
+                // Use our global matches data
+                const list = matchesData.filter(m => m.league === league);
+                const container = document.getElementById(containerId);
+                container.innerHTML = '';
+                
+                list.forEach(m => {
+                    const card = document.createElement('div');
+                    card.className = 'match-section';
+                    
+                    // Create betting options based on match markets
+                    let marketsHtml = '';
+                    
+                    // HDP market
+                    marketsHtml += `
+                        <div class="bet-option" data-match="${m.id}" data-market="hdp-home" data-odds="${m.markets.hdp.home}">
+                            <div class="bet-type">${m.home} (HDP ${m.markets.hdp.handicap})</div>
+                            <div class="bet-odds">${m.markets.hdp.home}</div>
+                        </div>
+                        <div class="bet-option" data-match="${m.id}" data-market="hdp-away" data-odds="${m.markets.hdp.away}">
+                            <div class="bet-type">${m.away} (HDP ${m.markets.hdp.handicap})</div>
+                            <div class="bet-odds">${m.markets.hdp.away}</div>
+                        </div>
+                    `;
+                    
+                    // OU market
+                    marketsHtml += `
+                        <div class="bet-option" data-match="${m.id}" data-market="ou-over" data-odds="${m.markets.ou.over}">
+                            <div class="bet-type">Over ${m.markets.ou.line}</div>
+                            <div class="bet-odds">${m.markets.ou.over}</div>
+                        </div>
+                        <div class="bet-option" data-match="${m.id}" data-market="ou-under" data-odds="${m.markets.ou.under}">
+                            <div class="bet-type">Under ${m.markets.ou.line}</div>
+                            <div class="bet-odds">${m.markets.ou.under}</div>
+                        </div>
+                    `;
+                    
+                    card.innerHTML = `
+                        <div class="match-header">
+                            <div class="match-title">${m.home} vs ${m.away}</div>
+                            <div class="match-date">${m.date}</div>
+                        </div>
+                        <div class="teams">
+                            <div class="team">
+                                <div class="team-logo">${m.home.substring(0,3).toUpperCase()}</div>
+                                <div class="team-name">${m.home}</div>
+                            </div>
+                            <div class="vs">VS</div>
+                            <div class="team">
+                                <div class="team-logo">${m.away.substring(0,3).toUpperCase()}</div>
+                                <div class="team-name">${m.away}</div>
+                            </div>
+                        </div>
+                        <div class="betting-options">${marketsHtml}</div>
+                    `;
+                    container.appendChild(card);
+                });
+
+                // attach click handlers for bet-option
+                container.querySelectorAll('.bet-option').forEach(opt => {
+                    opt.addEventListener('click', function(){
+                        if (!token) { 
+                            $('#betLoginOverlay').classList.add('active'); 
+                            return; 
+                        }
+                        // toggle selection
+                        const matchId = this.dataset.match;
+                        const market = this.dataset.market;
+                        const odds = parseFloat(this.dataset.odds);
+                        const match = this.closest('.match-section').querySelector('.match-title').innerText;
+                        const idx = slip.findIndex(s => s.matchId===matchId && s.market===market);
+                        
+                        if (idx !== -1) { 
+                            slip.splice(idx,1); 
+                            this.classList.remove('active-bet'); 
+                        } else { 
+                            slip.push({
+                                matchId, 
+                                match, 
+                                market, 
+                                odds,
+                                marketType: market.includes('hdp') ? 'HDP' : 'OU'
+                            }); 
+                            this.classList.add('active-bet'); 
+                        }
+                        renderSlip();
+                    });
+                });
+            } catch (err) {
+                console.error('loadLiveOdds error', err);
+            }
+        }
+
+        // ---------- SLIP ----------
+        function renderSlip() {
+            const c = $('#slipContent');
+            c.innerHTML = '';
+            if (!slip.length) {
+                c.innerHTML = `<div class="empty-slip"><i class="fas fa-ticket-alt" style="font-size:40px;margin-bottom:15px;"></i><div>No bets added to slip</div></div>`;
+                $('#potentialWin').textContent = '0.00€';
+                return;
+            }
+            slip.forEach((s, idx) => {
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <div style="display:flex;justify-content:space-between">
+                        <div>${s.match}</div>
+                        <div style="color:var(--danger);cursor:pointer" data-idx="${idx}">×</div>
+                    </div>
+                    <div style="margin-top:6px">${s.marketType} @ ${s.odds}</div>
+                `;
+                c.appendChild(div);
+            });
+            c.querySelectorAll('[data-idx]').forEach(btn => btn.addEventListener('click', e => {
+                const idx = Number(e.target.dataset.idx); 
+                slip.splice(idx,1); 
+                renderSlip();
+                document.querySelectorAll('.bet-option').forEach(o => o.classList.remove('active-bet'));
+            }));
+            updatePotentialWin();
+        }
+
+        function updatePotentialWin() {
+            const stake = parseFloat($('#stakeInput').value) || 0;
+            let totalOdds = 1;
+            slip.forEach(s => totalOdds *= s.odds);
+            const pot = stake * totalOdds;
+            $('#potentialWin').textContent = pot.toFixed(2) + '€';
+        }
+
+        $('#stakeInput').addEventListener('input', updatePotentialWin);
+        $('.quick-bet') && $$('.quick-bet').forEach(b => b.addEventListener('click', ()=>{ 
+            $('#stakeInput').value = b.textContent.replace('€',''); 
+            updatePotentialWin(); 
+        }));
+
+        $('#clearSlip').addEventListener('click', ()=> { slip=[]; renderSlip(); });
+
+        // ---------- PLACE BET ----------
+        $('#placeBetBtn').addEventListener('click', async () => {
+            if (!token) { $('#betLoginOverlay').classList.add('active'); return; }
+            if (!slip.length) return alert('No bets in slip');
+            const stake = parseFloat($('#stakeInput').value) || 0;
+            if (stake <= 0) return alert('Enter stake amount');
+            
+            // Demo bet placement
+            alert('Bet(s) placed successfully!');
+            slip = []; 
+            renderSlip();
+            
+            // Update user balance for demo
+            if (currentUser) {
+                currentUser.balance -= stake;
+                localStorage.setItem('mmbet_user', JSON.stringify(currentUser));
+                $('#balanceAmount').textContent = '€' + currentUser.balance.toFixed(2);
+                $('#accountBalance').textContent = '€' + currentUser.balance.toFixed(2);
+            }
+        });
+
+        // ---------- HISTORY ----------
+        async function loadBetHistory() {
+            if (!token) { 
+                $('#historyContainer').innerHTML = '<div>Please login to see bet history</div>'; 
+                return;
+            }
+            // Demo history
+            $('#historyContainer').innerHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Match</th><th>Market</th><th>Stake</th><th>Odds</th><th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1001</td><td>Man Utd vs Chelsea</td><td>HDP Home</td><td>€10</td><td>-0.95</td><td>Pending</td></tr>
+                        <tr><td>1002</td><td>Arsenal vs Liverpool</td><td>OU Over</td><td>€20</td><td>0.85</td><td>Won</td></tr>
+                        <tr><td>1003</td><td>Barcelona vs Real Madrid</td><td>HDP Away</td><td>€15</td><td>+0.65</td><td>Lost</td></tr>
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // ========== ADMIN PANEL CODE ==========
+        // Admin credentials
+        const adminCredentials = {user:'admin', pass:'admin123'};
+        const adminData = {name:'admin_user', balance:245680.50};
+
+        // Admin Helpers
+        const admin$ = s => document.querySelector(s);
+        const admin$$ = s => Array.from(document.querySelectorAll(s));
+
+        function showAdminLogin(show){
+            admin$('#adminLoginModal').style.display = show ? 'flex' : 'none';
+        }
+
+        // Render Stock HDP & OU table
+        function renderStockHdpTable() {
+            const tbody = admin$('#stockHdpBody');
+            tbody.innerHTML = '';
+            
+            matchesData.forEach(match => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${match.league}</td>
+                    <td>${match.date}</td>
+                    <td>
+                        <div class="team-cell">
+                            <div class="team-badge">${match.home.substring(0,2)}</div>
+                            <span>${match.match}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <select class="odds-type-select" onchange="changeOddsType(${match.id}, this.value)">
+                            <option value="malaysia" ${match.oddsType === 'malaysia' ? 'selected' : ''}>Malaysia</option>
+                            <option value="hongkong" ${match.oddsType === 'hongkong' ? 'selected' : ''}>Hong Kong</option>
+                            <option value="europe" ${match.oddsType === 'europe' ? 'selected' : ''}>Europe</option>
+                        </select>
+                    </td>
+                    <td>
+                        <div class="hdp-cell">
+                            <div class="odds-value">${match.home}</div>
+                            <input class="odds-input" value="${match.markets.hdp.home}" onchange="updateMatchStock(${match.id}, 'hdp-home', this.value)">
+                        </div>
+                    </td>
+                    <td>HDP ${match.markets.hdp.handicap}</td>
+                    <td>
+                        <div class="hdp-cell">
+                            <div class="odds-value">${match.away}</div>
+                            <input class="odds-input" value="${match.markets.hdp.away}" onchange="updateMatchStock(${match.id}, 'hdp-away', this.value)">
+                        </div>
+                    </td>
+                    <td>
+                        <div class="ou-cell">
+                            <div class="odds-value">Over ${match.markets.ou.line}</div>
+                            <input class="odds-input" value="${match.markets.ou.over}" onchange="updateMatchStock(${match.id}, 'ou-over', this.value)">
+                        </div>
+                    </td>
+                    <td>OU</td>
+                    <td>
+                        <div class="ou-cell">
+                            <div class="odds-value">Under ${match.markets.ou.line}</div>
+                            <input class="odds-input" value="${match.markets.ou.under}" onchange="updateMatchStock(${match.id}, 'ou-under', this.value)">
+                        </div>
+                    </td>
+                    <td>
+                        <button class="admin-btn small" onclick="refreshMatch(${match.id})">Refresh</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Change odds type (Malaysia, Hong Kong, Europe)
+        function changeOddsType(matchId, oddsType) {
+            const match = matchesData.find(m => m.id === matchId);
+            if (match) {
+                match.oddsType = oddsType;
+                // Convert odds based on type (simplified conversion for demo)
+                if (oddsType === 'hongkong') {
+                    match.markets.hdp.home = (parseFloat(match.markets.hdp.home) + 0.05).toFixed(2);
+                    match.markets.hdp.away = (parseFloat(match.markets.hdp.away) + 0.05).toFixed(2);
+                    match.markets.ou.over = (parseFloat(match.markets.ou.over) + 0.05).toFixed(2);
+                    match.markets.ou.under = (parseFloat(match.markets.ou.under) + 0.05).toFixed(2);
+                } else if (oddsType === 'europe') {
+                    match.markets.hdp.home = (parseFloat(match.markets.hdp.home) + 0.1).toFixed(2);
+                    match.markets.hdp.away = (parseFloat(match.markets.hdp.away) + 0.1).toFixed(2);
+                    match.markets.ou.over = (parseFloat(match.markets.ou.over) + 0.1).toFixed(2);
+                    match.markets.ou.under = (parseFloat(match.markets.ou.under) + 0.1).toFixed(2);
+                } else {
+                    // Malaysia odds (reset to original)
+                    match.markets.hdp.home = '-0.95';
+                    match.markets.hdp.away = '+0.85';
+                    match.markets.ou.over = '0.90';
+                    match.markets.ou.under = '0.95';
+                }
+                
+                // Update the global data and refresh both interfaces
+                updateMatchesData([...matchesData]);
+                alert(`Odds type changed to ${oddsType.toUpperCase()} for match ${matchId}`);
+            }
+        }
+
+        // Update match stock values
+        function updateMatchStock(matchId, type, value) {
+            const match = matchesData.find(m => m.id === matchId);
+            if (match) {
+                switch(type) {
+                    case 'hdp-home':
+                        match.markets.hdp.home = value;
+                        break;
+                    case 'hdp-away':
+                        match.markets.hdp.away = value;
+                        break;
+                    case 'ou-over':
+                        match.markets.ou.over = value;
+                        break;
+                    case 'ou-under':
+                        match.markets.ou.under = value;
+                        break;
+                }
+                
+                // Update the global data and refresh both interfaces
+                updateMatchesData([...matchesData]);
+                console.log(`Updated ${type} stock for match ${matchId}: ${value}`);
+            }
+        }
+
+        // Refresh match data
+        function refreshMatch(matchId) {
+            alert(`Refreshing data for match ID: ${matchId}`);
+            // In real implementation, this would fetch updated data from server
+        }
+
+        // Admin navigation mapping
+        function handleAdminNav(nav){
+            // Hide all panels first
+            admin$$('.admin-panel').forEach(panel => panel.classList.add('hidden'));
+            admin$$('.admin-menu a').forEach(a => a.classList.remove('active'));
+            
+            // Show selected panel and activate menu
+            admin$(`[data-nav="${nav}"]`).classList.add('active');
+            
+            if(nav.startsWith('stock-')){
+                admin$('#panel-stock-hdp').classList.remove('hidden');
+                if (nav === 'stock-hdp') {
+                    renderStockHdpTable();
+                }
+            } else if(nav === 'admin-dashboard') {
+                admin$('#panel-admin-dashboard').classList.remove('hidden');
+            } else if(nav === 'agent-codes') {
+                admin$('#panel-agent-codes').classList.remove('hidden');
+            } else if(nav === 'user-list') {
+                admin$('#panel-user-list').classList.remove('hidden');
+            } else {
+                alert('Opening: ' + nav);
+            }
+        }
+
+        // Admin login flow
+        function adminLoginAttempt(){
+            const u = admin$('#adminLoginUser').value.trim(), p = admin$('#adminLoginPass').value.trim();
+            if(u === adminCredentials.user && p === adminCredentials.pass){
+                // success
+                localStorage.setItem('mmbet_admin', JSON.stringify(adminData));
+                adminInitAfterLogin();
+                showAdminLogin(false);
+                admin$('#adminLogout').style.display = 'inline-block';
+            } else {
+                alert('Invalid admin credentials. Use admin/admin123');
+            }
+        }
+        
+        function adminLogout(){
+            localStorage.removeItem('mmbet_admin');
+            location.reload();
+        }
+
+        // Admin init after login
+        function adminInitAfterLogin(){
+            const ag = JSON.parse(localStorage.getItem('mmbet_admin') || '{}');
+            admin$('#adminName').innerText = ag.name || 'admin_user';
+            admin$('#adminBalance').textContent = '$ ' + (ag.balance || 0).toFixed(2);
+            renderStockHdpTable();
+            admin$('#adminLogout').style.display = 'inline-block';
+            // hide login modal if visible
+            showAdminLogin(false);
+        }
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded',()=>{
+            // User interface nav handlers
+            $$('.nav-item').forEach(item => item.addEventListener('click', function(){
+                $$('.nav-item').forEach(n=>n.classList.remove('active'));
+                this.classList.add('active');
+                const target = this.dataset.target;
+                $$('.page-section').forEach(sec => sec.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+                
+                // Load specific content for sections
+                if (target === 'history-section') {
+                    loadBetHistory();
+                }
+            }));
+
+            // Admin nav handlers
+            admin$$('[data-nav]').forEach(el=>el.addEventListener('click',ev=>{
+                ev.preventDefault();
+                handleAdminNav(el.getAttribute('data-nav'));
+            }));
+
+            // User login
+            $('#loginBtn').addEventListener('click', adminLoginAttempt);
+            $('#loginClear').addEventListener('click', ()=>{ $('#loginUsername').value=''; $('#loginPassword').value='' });
+
+            // Admin login
+            admin$('#adminLoginBtn').addEventListener('click', adminLoginAttempt);
+            admin$('#adminLoginClear').addEventListener('click', ()=>{ 
+                admin$('#adminLoginUser').value=''; 
+                admin$('#adminLoginPass').value=''; 
+            });
+            admin$('#adminLogout').addEventListener('click', adminLogout);
+
+            // Initialize user interface if user is logged in
+            if(localStorage.getItem('mmbet_user')) {
+                currentUser = JSON.parse(localStorage.getItem('mmbet_user'));
+                updateUIAfterLogin();
+            }
+            
+            // Initialize admin interface if admin is logged in
+            if(localStorage.getItem('mmbet_admin')) {
+                adminInitAfterLogin();
+            } else {
+                showAdminLogin(true);
+            }
+            
+            // Load initial data
+            loadLiveOdds('Premier League', 'matchesContainer');
+            loadLiveOdds('Premier League', 'liveMatchesContainer');
+            
+            // Set current date
+            const now = new Date();
+            admin$('#currentDate').textContent = now.toISOString().split('T')[0];
+        });
+
+        // Expose functions to global scope
+        window.updateMatchStock = updateMatchStock;
+        window.refreshMatch = refreshMatch;
+        window.changeOddsType = changeOddsType;
+    </script>
+</body>
+                                                                                                                      </html>
